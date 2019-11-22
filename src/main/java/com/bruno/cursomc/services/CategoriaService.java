@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.bruno.cursomc.dominio.Categoria;
 import com.bruno.cursomc.repositories.CategoriaRepository;
+import com.bruno.cursomc.services.exceptions.ObjectNotFoundException;
 
+// Classe responsável por realizar consultas no repositório.
 @Service
 public class CategoriaService {
 	
@@ -24,7 +26,8 @@ public class CategoriaService {
 	// O Spring Boot versão 2.X.X só aceita versão 8 em diante.
 	public Categoria buscar(Integer id) {
 		Optional<Categoria> obj = repo.findById(id);
-		return obj.orElse(null);
+		return obj.orElseThrow(() -> new ObjectNotFoundException(
+				"Objeto não encontrado! Id: " + id + ", Tipo: " + Categoria.class.getName()));
 	}
 
 }

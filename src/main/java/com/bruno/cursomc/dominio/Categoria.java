@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class Categoria implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -18,6 +20,7 @@ public class Categoria implements Serializable {
 	private Integer id;
 	private String nome;
 	
+	@JsonManagedReference //Barrar a referência cíclica, aqui é onde quero nesse lado venha os objetos associados.
 	@ManyToMany(mappedBy = "categorias")
 	private List<Produto> produtos = new ArrayList<>(); // Fazer Associações, No caso, uma categoria tem vários produtos (Iniciar Coleções)
 	
