@@ -4,12 +4,14 @@ import java.io.Serializable;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 public class ItemPedido implements Serializable{
 	private static final long serialVersionUID = 1L;
 
-	// essa classe terá com Id um objeto do tipo ItemPedidoPK, devemos instaciar pq ele é auxiliar 
-	@EmbeddedId
+	@JsonIgnore // Ignorar tudo que vier de ItemPedidoPK
+	@EmbeddedId // essa classe terá com Id um objeto do tipo ItemPedidoPK, devemos instaciar pq ele é auxiliar 
 	private ItemPedidoPK id = new ItemPedidoPK();
 	
 	private Double desconto;
@@ -28,6 +30,7 @@ public class ItemPedido implements Serializable{
 		this.preco = preco;
 	}
 	
+	@JsonIgnore // Ignorar a serialização
 	public Pedido getPedido() {
 		return id.getPedido();
 	}
