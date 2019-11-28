@@ -10,7 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Estado implements Serializable {
@@ -21,7 +21,7 @@ public class Estado implements Serializable {
 	private String nome;
 	
 	@OneToMany(mappedBy = "estado")
-	@JsonBackReference // será omitido na serialização
+	@JsonIgnore // será omitido na serialização
 	private List<Cidade> cidades = new ArrayList<>();
 	
 	public Estado() {
