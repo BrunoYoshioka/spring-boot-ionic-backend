@@ -19,8 +19,8 @@ public class ClienteResources {
 	
 	// para ser uma função tem que associar a ela o verbo do http
 	@RequestMapping(value="/{id}", method = RequestMethod.GET)
-	public ResponseEntity<?> listar(@PathVariable Integer id){
-		Cliente obj = service.buscar(id);
+	public ResponseEntity<Cliente> find(@PathVariable Integer id){
+		Cliente obj = service.find(id);
 		return ResponseEntity.ok().body(obj);
 	}
 }

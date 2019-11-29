@@ -24,7 +24,7 @@ public class PedidoService {
 //	}
 	
 	// O Spring Boot versão 2.X.X só aceita versão 8 em diante.
-	public Pedido buscar(Integer id) {
+	public Pedido find(Integer id) {
 		Optional<Pedido> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id: " + id + ", Tipo: " + Pedido.class.getName()));

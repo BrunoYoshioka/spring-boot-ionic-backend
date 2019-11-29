@@ -25,7 +25,7 @@ public class ClienteService {
 	
 	// O Spring Boot versão 2.X.X só aceita versão 8 em diante.
 	// Responsável por receber id e retornar cliente correspondente ao id 
-	public Cliente buscar(Integer id) {
+	public Cliente find(Integer id) {
 		Optional<Cliente> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName()));

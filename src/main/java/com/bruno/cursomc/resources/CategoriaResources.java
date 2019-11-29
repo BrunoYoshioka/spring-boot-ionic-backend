@@ -23,8 +23,8 @@ public class CategoriaResources {
 	
 	// para ser uma função tem que associar a ela o verbo do http
 	@RequestMapping(value="/{id}", method = RequestMethod.GET)
-	public ResponseEntity<?> listar(@PathVariable Integer id){
-		Categoria obj = service.buscar(id);
+	public ResponseEntity<Categoria> find(@PathVariable Integer id){
+		Categoria obj = service.find(id);
 		return ResponseEntity.ok().body(obj);
 	}
 	
@@ -39,5 +39,14 @@ public class CategoriaResources {
 				.path("/{id}").buildAndExpand(obj.getId()).toUri();
 		
 		return ResponseEntity.created(uri).build(); // gerar 201 como argumento de resposta
+	}
+	
+	
+	@RequestMapping(value="/{id}", method = RequestMethod.PUT)
+	//Retornar corpo vazio quando atualização ocorre com sucesso
+	public ResponseEntity<Void> update(@RequestBody Categoria obj, @PathVariable Integer id){
+		obj.setId(id);
+		obj = service.update(obj);
+		return ResponseEntity.noContent().build();
 	}
 }

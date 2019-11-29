@@ -24,16 +24,22 @@ public class CategoriaService {
 //	}
 	
 	// O Spring Boot versão 2.X.X só aceita versão 8 em diante.
-	public Categoria buscar(Integer id) {
-		Optional<Categoria> obj = repo.findById(id);
+	public Categoria find(Integer id) {
+		Optional<Categoria> obj = repo.findById(id); // busca o objeto no banco
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
-				"Objeto não encontrado! Id: " + id + ", Tipo: " + Categoria.class.getName()));
+				"Objeto não encontrado! Id: " + id + ", Tipo: " + Categoria.class.getName())); // caso não existir
 	}
 	
 	
 	public Categoria insert(Categoria obj) {
 		obj.setId(null); // objeto novo a ser inserido tem que ter o id nulo 
 		return repo.save(obj); // método salvar
+	}
+	
+	
+	public Categoria update(Categoria obj) {
+		find(obj.getId()); // repete o mesmo procedimento do método find antes de salvar
+		return repo.save(obj);
 	}
 
 }
