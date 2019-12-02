@@ -1,5 +1,5 @@
 package com.bruno.cursomc.services.exceptions;
-
+// classe de excessão personalizada
 public class DataIntegrityException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;

@@ -1,5 +1,6 @@
 package com.bruno.cursomc.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,16 +45,22 @@ public class CategoriaService {
 		return repo.save(obj);
 	}
 
-
+	
 	public void delete(Integer id) {
 		// caso id não existe, irá executar uma exceção do método find
 		find(id);
 		try {
 			repo.deleteById(id);
 		}
+		// capturar a excessão de Integridade, lançando a excessão personalizada
 		catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Não é possível excluir categoria que possui produtos");
 		}
+	}
+
+	// serviço para buscar todas as categorias
+	public List<Categoria> findAll() {
+		return repo.findAll();
 	}
 
 }

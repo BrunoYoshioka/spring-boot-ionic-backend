@@ -1,6 +1,8 @@
 package com.bruno.cursomc.resources;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.bruno.cursomc.dominio.Categoria;
+import com.bruno.cursomc.dto.CategoriaDTO;
 import com.bruno.cursomc.services.CategoriaService;
 
 @RestController
@@ -54,5 +57,15 @@ public class CategoriaResources {
 	public ResponseEntity<Void> delete(@PathVariable Integer id){
 		service.delete(id);
 		return ResponseEntity.noContent().build();
+	}
+	
+	// Mostrar todas as categorias
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity <List<CategoriaDTO>> findAll(){
+		List<Categoria> list = service.findAll();
+		// percorrendo a lista, instanciando DTO correspondente
+		List<CategoriaDTO> listDto = list.stream().map(obj /*dando apelido objeto*/ -> // aplicar operação map que vai percorrer para cada elemento da lista
+			new CategoriaDTO(obj/*Passando o objeto (senão retorna nulo!*/)).collect(Collectors.toList()); 
+		return ResponseEntity.ok().body(listDto);
 	}
 }
