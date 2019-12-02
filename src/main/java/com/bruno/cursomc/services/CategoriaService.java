@@ -3,10 +3,12 @@ package com.bruno.cursomc.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.bruno.cursomc.dominio.Categoria;
 import com.bruno.cursomc.repositories.CategoriaRepository;
+import com.bruno.cursomc.services.exceptions.DataIntegrityException;
 import com.bruno.cursomc.services.exceptions.ObjectNotFoundException;
 
 // Classe responsável por realizar consultas no repositório.
@@ -40,6 +42,18 @@ public class CategoriaService {
 	public Categoria update(Categoria obj) {
 		find(obj.getId()); // repete o mesmo procedimento do método find antes de salvar
 		return repo.save(obj);
+	}
+
+
+	public void delete(Integer id) {
+		// caso id não existe, irá executar uma exceção do método find
+		find(id);
+		try {
+			repo.deleteById(id);
+		}
+		catch (DataIntegrityViolationException e) {
+			throw new DataIntegrityException("Não é possível excluir categoria que possui produtos");
+		}
 	}
 
 }
