@@ -49,7 +49,8 @@ public class Cliente implements Serializable {
 		this.nome = nome;
 		this.email = email;
 		this.cpfOuCnpj = cpfouCnpj;
-		this.tipo = tipo.getCod();
+		//this.tipo = tipo.getCod(); // Ele não pode ser nulo (NullPointerException) Teria que criar condicional para isso
+		this.tipo = (tipo == null) ? null : /*Caso contrario*/ tipo.getCod();
 	}
 
 	public Integer getId() {
