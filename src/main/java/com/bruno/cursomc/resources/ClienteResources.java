@@ -1,5 +1,6 @@
 package com.bruno.cursomc.resources;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.bruno.cursomc.dominio.Cliente;
 import com.bruno.cursomc.dto.ClienteDTO;
+import com.bruno.cursomc.dto.ClienteNewDTO;
 import com.bruno.cursomc.services.ClienteService;
 
 @RestController
@@ -31,6 +34,21 @@ public class ClienteResources {
 	public ResponseEntity<Cliente> find(@PathVariable Integer id){
 		Cliente obj = service.find(id);
 		return ResponseEntity.ok().body(obj);
+	}
+	
+	// Incluir operação de inserir cliente
+	@RequestMapping(method = RequestMethod.POST)
+	// Será do tipo ResponseEntity ou seja resposta do Http
+	// @RequestBody faz que o json seja convertido em java automático
+	public ResponseEntity<Void> insert(/*Para que o objeto dto seja validado antes de passar pra frente*/ @Valid @RequestBody ClienteNewDTO objDto){
+		// convertendo objeto para entity
+		Cliente obj = service.fromDTO(objDto);
+		obj = service.insert(obj); // obj recebe um serviço onde insere a novo cliente no banco.
+		//pegar o novo id e fornecer como argumento da URI
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+				.path("/{id}").buildAndExpand(obj.getId()).toUri();
+		
+		return ResponseEntity.created(uri).build(); // gerar 201 como argumento de resposta
 	}
 	
 	@RequestMapping(value="/{id}", method = RequestMethod.PUT)

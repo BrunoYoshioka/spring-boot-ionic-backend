@@ -9,10 +9,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.bruno.cursomc.dominio.Cidade;
 import com.bruno.cursomc.dominio.Cliente;
+import com.bruno.cursomc.dominio.Endereco;
+import com.bruno.cursomc.dominio.enums.TipoCliente;
 import com.bruno.cursomc.dto.ClienteDTO;
+import com.bruno.cursomc.dto.ClienteNewDTO;
 import com.bruno.cursomc.repositories.ClienteRepository;
+import com.bruno.cursomc.repositories.EnderecoRepository;
 import com.bruno.cursomc.services.exceptions.DataIntegrityException;
 import com.bruno.cursomc.services.exceptions.ObjectNotFoundException;
 
@@ -22,6 +28,9 @@ public class ClienteService {
 	
 	@Autowired
 	private ClienteRepository repo;
+	
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 	
 	// criando uma operação para buscar a categoria por id
 	// chamar a operação do acesso a dados que é o repository
@@ -36,6 +45,14 @@ public class ClienteService {
 		Optional<Cliente> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName()));
+	}
+	
+	@Transactional // usar essa anotação transactional para salvar tanto o cliente quanto endereços na mesma no banco de dados
+	public Cliente insert(Cliente obj) {
+		obj.setId(null);
+		obj = repo.save(obj);
+		enderecoRepository.saveAll(obj.getEnderecos()); // detalhe, antes tem q implementar cli.getEnderecos().add(end); no método fromDTO
+		return obj;
 	}
 	
 	public Cliente update(Cliente obj) {
@@ -77,6 +94,23 @@ public class ClienteService {
 	// Método auxiliar que instancia um cliente apartir de um DTO construo objeto categoria
 	public Cliente fromDTO(ClienteDTO objDto) {
 		return new Cliente(objDto.getId(), objDto.getNome(), objDto.getEmail(), null, null);
+	}
+	
+	public Cliente fromDTO(ClienteNewDTO objDto) {
+		Cliente cli = new Cliente(null, objDto.getNome(), objDto.getEmail(), objDto.getCpfOuCnpj(),
+				/*Convertendo para o tipo cliente*/ TipoCliente.toEnum(objDto.getTipo()));
+		Cidade cid = new Cidade(objDto.getCidadeId(), null, null);
+		Endereco end = new Endereco(null, objDto.getLogradouro(), objDto.getNumero(), objDto.getComplemento(), objDto.getBairro(), objDto.getCep(), cli /*O endereço já conhece os clientes*/, cid);
+		// Incluir Endereço end na lista do cliente
+		cli.getEnderecos().add(end); // O cliente irá conhecer os endereços
+		cli.getTelefones().add(objDto.getTelefone1()); // O cliente irá conhecer pelo menos um telefone obrigatoriamente
+		if(objDto.getTelefone2()!=null) {
+			cli.getTelefones().add(objDto.getTelefone2()); // se o telefone 2 for diferente de nulo, eu adiciono telefone 2 no cliente
+		}
+		if(objDto.getTelefone3()!=null) {
+			cli.getTelefones().add(objDto.getTelefone3());
+		}
+		return cli;
 	}
 	
 	// será tipo private pq ele é metodo auxiliar de dentro da classe, pois não tem motivo de ficar exposto pra fora
