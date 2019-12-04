@@ -45,10 +45,14 @@ public class CategoriaService {
 	
 	
 	public Categoria update(Categoria obj) {
-		find(obj.getId()); // repete o mesmo procedimento do método find antes de salvar
-		return repo.save(obj);
+//		find(obj.getId()); // repete o mesmo procedimento do método find antes de salvar
+//		return repo.save(obj);
+		
+		// Após alterar dados como nome pelo DTO, simplesmente salvou a categoria temporário que foi criado apartir do DTO
+		Categoria newObj = find(obj.getId()); // Instanciar categoria apartir do banco de dados
+		updateData(newObj, obj);
+		return repo.save(newObj); // salva o newObj
 	}
-
 	
 	public void delete(Integer id) {
 		// caso id não existe, irá executar uma exceção do método find
@@ -78,5 +82,11 @@ public class CategoriaService {
 	// Método auxiliar que instancia uma categoria apartir de um DTO construo objeto categoria
 	public Categoria fromDTO(CategoriaDTO objDto) {
 		return new Categoria(objDto.getId(), objDto.getNome());
+	}
+	
+	// será tipo private pq ele é metodo auxiliar de dentro da classe, pois não tem motivo de ficar exposto pra fora
+	private void updateData(Categoria newObj, Categoria obj) {
+		// Essa variavel newObj que busquei todos os dados do banco irá atualizar para os novos valores fornecidos no obj
+		newObj.setNome(obj.getNome());
 	}
 }
