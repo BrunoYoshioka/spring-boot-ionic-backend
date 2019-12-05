@@ -6,13 +6,20 @@ import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.bruno.cursomc.dominio.Cliente;
 import com.bruno.cursomc.dominio.enums.TipoCliente;
 import com.bruno.cursomc.dto.ClienteNewDTO;
+import com.bruno.cursomc.repositories.ClienteRepository;
 import com.bruno.cursomc.resources.exception.FieldMessage;
 import com.bruno.cursomc.services.validation.utils.BR;
 
 public class ClienteInsertValidator implements ConstraintValidator</*Especificar o tipo de anotação*/ClienteInsert, /*Tipo da classe que aceita a anotação*/ClienteNewDTO> {
 
+	@Autowired
+	private ClienteRepository repo;
+	
 	@Override 
     public void initialize(ClienteInsert ann) {		
 	}
@@ -30,6 +37,11 @@ public class ClienteInsertValidator implements ConstraintValidator</*Especificar
         // Teste se o tipo do meu DTO for igual pessoa jurídica E não for válido o CNPJ
         if(objDto.getTipo().equals(TipoCliente.PESSOAJURIDICA.getCod()) && !BR.isValidCNPJ(objDto.getCpfOuCnpj())) {
         	list.add(new FieldMessage("cpfOuCnpj", "CNPJ inválido"));
+        }
+        
+        Cliente aux = repo.findByEmail(objDto.getEmail());
+        if(aux != null /*Registro Encontrado no banco*/) {
+        	list.add(new FieldMessage("email", "Email já existente")); // gerei erro de validação
         }
         
         for (FieldMessage e : list) {             
