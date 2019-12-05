@@ -6,8 +6,10 @@ import javax.validation.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Length;
 
 import com.bruno.cursomc.dominio.Cliente;
+import com.bruno.cursomc.services.validation.ClienteUpdate;
 
 // Classe para ter dados basicos para atualizar, deletar e listar os clientes
+@ClienteUpdate //Anotar nosso DTO com a nova anotação criada
 public class ClienteDTO {
 	// o cliente em hipotese nenhuma deve alterar o cpf ou cnpj
 	
