@@ -54,15 +54,27 @@ public class CategoriaService {
 		return repo.save(newObj); // salva o newObj
 	}
 	
-	public void delete(Integer id) {
-		// caso id não existe, irá executar uma exceção do método find
-		find(id);
-		try {
+	// Esse método foi comentada porque excluia categoria mesmo tendo produtos relacionados.
+//	public void delete(Integer id) {
+//		// caso id não existe, irá executar uma exceção do método find
+//		find(id);
+//		try {
+//			repo.deleteById(id);
+//		}
+//		// capturar a excessão de Integridade, lançando a excessão personalizada
+//		catch (DataIntegrityViolationException e) {
+//			throw new DataIntegrityException("Não é possível excluir categoria que possui produtos");
+//		}
+//	}
+	
+	public void delete(Integer id){
+
+		Categoria categoria = find(id);
+		
+		if (categoria.getProdutos().isEmpty()) {
 			repo.deleteById(id);
-		}
-		// capturar a excessão de Integridade, lançando a excessão personalizada
-		catch (DataIntegrityViolationException e) {
-			throw new DataIntegrityException("Não é possível excluir categoria que possui produtos");
+		} else {
+			throw new DataIntegrityException("Não é possível excluir uma categoria que possui produtos");
 		}
 	}
 
