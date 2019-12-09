@@ -77,7 +77,8 @@ public class CategoriaResources {
 		return ResponseEntity.ok().body(listDto);
 	}
 	
-	// Mostrar todas as categorias
+	// O sistema informa os nomes de todas categorias ordenadamente.
+	// Buscar todas as categorias com paginação
 	@RequestMapping(value="/page", method = RequestMethod.GET)
 	public ResponseEntity <Page<CategoriaDTO>> findPage(
 			@RequestParam(value = "page", defaultValue = "0") Integer page /*Pagina começa com 0*/, 
