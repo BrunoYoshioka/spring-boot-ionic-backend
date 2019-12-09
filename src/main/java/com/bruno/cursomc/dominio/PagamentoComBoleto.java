@@ -6,8 +6,10 @@ import javax.persistence.Entity;
 
 import com.bruno.cursomc.dominio.enums.EstadoPagamento;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @Entity
+@JsonTypeName("pagamentoComBoleto") // Nessa subclasse, defina qual será o valor do campo adicional para ela
 public class PagamentoComBoleto extends Pagamento {
 	private static final long serialVersionUID = 1L;
 	

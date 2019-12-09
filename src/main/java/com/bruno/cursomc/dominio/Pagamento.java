@@ -12,9 +12,11 @@ import javax.persistence.OneToOne;
 
 import com.bruno.cursomc.dominio.enums.EstadoPagamento;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED) // mapeando herança (super classe)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type") // anotações usadas para serializar e deserializar os objetos com json, defina que haverá um campo adicional @type
 // A classe será abstrata para garantir que não consiga instanciar objetos do tipo pagamento
 public abstract class Pagamento implements Serializable{
 	private static final long serialVersionUID = 1L;
