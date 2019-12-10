@@ -37,6 +37,9 @@ public class PedidoService {
 	@Autowired
 	private ItemPedidoRepository itemPedidoRepository;
 	
+	@Autowired
+	private ClienteService clienteService;
+	
 	// criando uma operação para buscar a categoria por id
 	// chamar a operação do acesso a dados que é o repository
 //	public Pedido buscar(Integer id) {
@@ -55,6 +58,7 @@ public class PedidoService {
 	public Pedido insert(Pedido obj) {
 		obj.setId(null); // garantir que seja realmente novo pedido
 		obj.setInstante(new Date()); // cria uma nova data atual do pedido
+		obj.setCliente(clienteService.find(obj.getCliente().getId())); // usar o id para buscar do banco o cliente
 		obj.getPagamento().setEstado(EstadoPagamento.PENDENTE);
 		 // associação de mão dupla do pagamento que tem que conhecer o pedido dele
 		obj.getPagamento().setPedido(obj);
@@ -71,10 +75,12 @@ public class PedidoService {
 		// percorrer todos os itens do pedido associado objeto do getItens
 		for(ItemPedido ip : obj.getItens()) {
 			ip.setDesconto(0.0);
-			ip.setPreco(produtoService.find(ip.getProduto().getId()).getPreco());
+			ip.setProduto(produtoService.find(ip.getProduto().getId())); // associando produto que busco pelo banco
+			ip.setPreco(ip.getProduto().getPreco()); // pegar o preço do produto
 			ip.setPedido(obj); // associar esse item pedido com o pedido que estou inserindo
 		}
 		itemPedidoRepository.saveAll(obj.getItens());
+		System.out.println(obj);
 		return obj;
 	}
 
