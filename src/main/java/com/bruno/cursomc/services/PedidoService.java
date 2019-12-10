@@ -40,6 +40,9 @@ public class PedidoService {
 	@Autowired
 	private ClienteService clienteService;
 	
+	@Autowired
+	private EmailService emailService;
+	
 	// criando uma operação para buscar a categoria por id
 	// chamar a operação do acesso a dados que é o repository
 //	public Pedido buscar(Integer id) {
@@ -80,7 +83,7 @@ public class PedidoService {
 			ip.setPedido(obj); // associar esse item pedido com o pedido que estou inserindo
 		}
 		itemPedidoRepository.saveAll(obj.getItens());
-		System.out.println(obj);
+		emailService.senderOrderConfirmationEmail(obj); // mandar o email quando acabar de ser inserido um novo pedido
 		return obj;
 	}
 
