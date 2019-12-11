@@ -16,7 +16,6 @@ import com.bruno.cursomc.repositories.ItemPedidoRepository;
 import com.bruno.cursomc.repositories.PagamentoRepository;
 import com.bruno.cursomc.repositories.PedidoRepository;
 import com.bruno.cursomc.services.exceptions.ObjectNotFoundException;
-
 // Classe responsável por realizar consultas no repositório.
 @Service
 public class PedidoService {
@@ -26,7 +25,6 @@ public class PedidoService {
 	
 	@Autowired
 	private BoletoService boletoService;
-	
 	// incluir dependencia para pagamento repository
 	@Autowired
 	private PagamentoRepository pagamentoRepository;
@@ -86,5 +84,4 @@ public class PedidoService {
 		emailService.senderOrderConfirmationEmail(obj); // mandar o email quando acabar de ser inserido um novo pedido
 		return obj;
 	}
-
 }

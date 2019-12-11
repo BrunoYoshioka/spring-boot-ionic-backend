@@ -23,11 +23,9 @@ public class TestConfig {
 		dbService.instantiateDatabase();
 		return true;
 	}
-	
 	// criar um método @Bean EmailService que retorna uma instância de MockEmailService
 	@Bean
 	public EmailService emailService() {
 		return new MockEmailService();
 	}
-	
 }

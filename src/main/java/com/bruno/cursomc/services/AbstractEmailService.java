@@ -8,7 +8,6 @@ import org.springframework.mail.SimpleMailMessage;
 import com.bruno.cursomc.dominio.Pedido;
 
 public abstract class AbstractEmailService implements EmailService {
-	
 	// dizer pro framework puxar pra essa variavel o valor que está no Aplication.properties
 	@Value("${default.sender}")
 	private String sender;
@@ -28,5 +27,4 @@ public abstract class AbstractEmailService implements EmailService {
 		sm.setText(obj.toString()); // Corpo do email
 		return sm;
 	}
-
 }
