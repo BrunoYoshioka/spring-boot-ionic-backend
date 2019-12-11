@@ -81,7 +81,7 @@ public class PedidoService {
 			ip.setPedido(obj); // associar esse item pedido com o pedido que estou inserindo
 		}
 		itemPedidoRepository.saveAll(obj.getItens());
-		emailService.senderOrderConfirmationEmail(obj); // mandar o email quando acabar de ser inserido um novo pedido
+		emailService.sendOrderConfirmationHtmlEmail(obj); // mandar o email quando acabar de ser inserido um novo pedido
 		return obj;
 	}
 }
