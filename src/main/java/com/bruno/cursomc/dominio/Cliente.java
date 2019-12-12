@@ -32,6 +32,9 @@ public class Cliente implements Serializable {
 	private String cpfOuCnpj;
 	private Integer tipo; // Armazenar internamente com dado da classe e não um dado TipoCliente, então será do tipo Inteiro
 	
+	@JsonIgnore
+	private String senha;
+	
 	@OneToMany(mappedBy = "cliente", cascade=CascadeType.ALL)
 	private List<Endereco> enderecos = new ArrayList<>();
 	
@@ -47,7 +50,7 @@ public class Cliente implements Serializable {
 	public Cliente() {
 	}
 
-	public Cliente(Integer id, String nome, String email, String cpfouCnpj, TipoCliente tipo) {
+	public Cliente(Integer id, String nome, String email, String cpfouCnpj, TipoCliente tipo, String senha) {
 		super();
 		this.id = id;
 		this.nome = nome;
@@ -55,6 +58,7 @@ public class Cliente implements Serializable {
 		this.cpfOuCnpj = cpfouCnpj;
 		//this.tipo = tipo.getCod(); // Ele não pode ser nulo (NullPointerException) Teria que criar condicional ternária para isso
 		this.tipo = (tipo == null) /*Caso vier nulo*/ ? null : /*Caso contrario*/ tipo.getCod();
+		this.senha = senha;
 	}
 
 	public Integer getId() {
@@ -95,6 +99,14 @@ public class Cliente implements Serializable {
 
 	public void setTipo(TipoCliente tipo) {
 		this.tipo = tipo.getCod();
+	}
+	
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
 	}
 
 	public List<Endereco> getEnderecos() {
@@ -144,5 +156,5 @@ public class Cliente implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
-	}	
+	}
 }
