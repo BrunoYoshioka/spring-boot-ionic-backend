@@ -5,17 +5,20 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.bruno.cursomc.dominio.enums.Perfil;
 import com.bruno.cursomc.dominio.enums.TipoCliente;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -43,11 +46,17 @@ public class Cliente implements Serializable {
 	@CollectionTable(name="TELEFONE")
 	private Set<String> telefones = new HashSet<>();
 	
+	// Um atributo correspondente aos perfis do usuário a serem armazenados na base de dados
+	@ElementCollection(fetch=FetchType.EAGER) // acrescentar fetch para garantir que sempre que buscar cliente no banco, busca perfil também
+	@CollectionTable(name="PERFIS")
+	private Set<Integer> perfis = new HashSet<>();
+	
 	@JsonIgnore // os pedidos do cliente não serão serializados
 	@OneToMany(mappedBy = "cliente")
 	private List<Pedido> pedidos = new ArrayList<>();
 	
 	public Cliente() {
+		addPerfil(Perfil.CLIENTE); // todo cliente, no padrão é perfil cliente
 	}
 
 	public Cliente(Integer id, String nome, String email, String cpfouCnpj, TipoCliente tipo, String senha) {
@@ -59,6 +68,7 @@ public class Cliente implements Serializable {
 		//this.tipo = tipo.getCod(); // Ele não pode ser nulo (NullPointerException) Teria que criar condicional ternária para isso
 		this.tipo = (tipo == null) /*Caso vier nulo*/ ? null : /*Caso contrario*/ tipo.getCod();
 		this.senha = senha;
+		addPerfil(Perfil.CLIENTE);
 	}
 
 	public Integer getId() {
@@ -107,6 +117,14 @@ public class Cliente implements Serializable {
 
 	public void setSenha(String senha) {
 		this.senha = senha;
+	}
+	
+	public Set<Perfil> getPerfis() /*retornar os perfis correspondentes a cliente*/ {
+		return perfis.stream().map(x /*para cada elemento x da coleção*/ -> Perfil.toEnum(x)).collect(Collectors.toSet()); //Percorrendo a coleção convertendo todos para o tipo enumerado perfil
+	}
+	
+	public void addPerfil(Perfil perfil) {
+		perfis.add(perfil.getCod());
 	}
 
 	public List<Endereco> getEnderecos() {
