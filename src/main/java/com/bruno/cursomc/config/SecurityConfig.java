@@ -7,14 +7,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import com.bruno.cursomc.security.JWTAuthenticationFilter;
+import com.bruno.cursomc.security.JWTUtil;
 
 // Esta classe de configuração SecurityConfig para definir as configurações de segurança
 // Esta classe deve herdar de WebSecurityConfigurerAdapter
@@ -22,8 +27,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
+	// injetar a interface
+	@Autowired
+    private UserDetailsService userDetailsService; // que será capaz de buscar o usuário por email
+	
 	@Autowired
     private Environment env;
+	
+	@Autowired
+	private JWTUtil jwtUtil;
 	
 	// vetor de Strings
 	private static final String[] PUBLIC_MATCHERS = {
@@ -50,7 +62,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
 			.antMatchers(PUBLIC_MATCHERS).permitAll() // passando o vetor de argumentos (todos os caminhos que tiver no PUBLIC_MATCHERS irá permitir)
 			.anyRequest().authenticated(); // qualquer solicitação seja autenticada
+		http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // segurar pra que o backend não irá criar excessão de usuários
+	}
+	
+	// sobrescrever o método: public void configure(AuthenticationManagerBuilder auth)
+	public void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
 	}
 	
 	@Bean
