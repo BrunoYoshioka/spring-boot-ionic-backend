@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -26,6 +27,7 @@ import com.bruno.cursomc.security.JWTUtil;
 // Esta classe deve herdar de WebSecurityConfigurerAdapter
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	// injetar a interface
@@ -50,6 +52,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			"/clientes/**"
 	};
 	
+	private static final String[] PUBLIC_MATCHERS_POST = {
+			"/clientes/**"
+	};
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		// pegar profile ativo do projeto, se caso ele tiver no "test"
@@ -60,6 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		
 		http.cors().and().csrf().disable();
 		http.authorizeRequests()
+			.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
 			.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
 			.antMatchers(PUBLIC_MATCHERS).permitAll() // passando o vetor de argumentos (todos os caminhos que tiver no PUBLIC_MATCHERS irá permitir)
 			.anyRequest().authenticated(); // qualquer solicitação seja autenticada

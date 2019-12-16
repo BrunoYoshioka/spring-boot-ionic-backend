@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +37,7 @@ public class CategoriaResources {
 	}
 	
 	// Incluir operação de inserir categoria
+	@PreAuthorize("hasAnyRole('ADMIN')") // Apenas admin pode executar a operação inserir
 	@RequestMapping(method = RequestMethod.POST)
 	// Será do tipo ResponseEntity ou seja resposta do Http
 	// @RequestBody faz que o json seja convertido em java automático
@@ -50,7 +52,7 @@ public class CategoriaResources {
 		return ResponseEntity.created(uri).build(); // gerar 201 como argumento de resposta
 	}
 	
-	
+	@PreAuthorize("hasAnyRole('ADMIN')") // Apenas admin pode executar a operação atualizar
 	@RequestMapping(value="/{id}", method = RequestMethod.PUT)
 	//Retornar corpo vazio quando atualização ocorre com sucesso
 	public ResponseEntity<Void> update(@Valid @RequestBody CategoriaDTO objDto, @PathVariable Integer id){
@@ -61,6 +63,7 @@ public class CategoriaResources {
 		return ResponseEntity.noContent().build();
 	}
 	
+	@PreAuthorize("hasAnyRole('ADMIN')") // Apenas admin pode executar a operação deletar
 	@RequestMapping(value="/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@PathVariable Integer id){
 		service.delete(id);
