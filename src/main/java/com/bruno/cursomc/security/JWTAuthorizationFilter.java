@@ -12,7 +12,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 //Criar um filtro de autorização 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
@@ -39,7 +38,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 		// verificar se o header não tiver nulo e começa com "Bearer " se tudo for verdade instancio o objeto do Spring Security
 		if(header != null && header.startsWith("Bearer ")){
 			// mandar o valor que tiver na frente do Bearer e retornar objeto que tiver 
-			UsernamePasswordAuthenticationToken auth = getAuthentication(request, header.substring(7)); // costruo objeto a partir do token 
+			UsernamePasswordAuthenticationToken auth = getAuthentication(header.substring(7)); // costruo objeto a partir do token 
 			if(auth != null) /*Se o objeto construido for diferente de nulo (O token está tudo ok) */ {
 				SecurityContextHolder.getContext().setAuthentication(auth); // chamo a função para liberar o acesso do meu filtro
 			}
@@ -47,11 +46,12 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 		chain.doFilter(request, response); // Continuar a execução normal da requisição depois do teste de liberação do usuário
 	}
 
-	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request, String token) {
+	private UsernamePasswordAuthenticationToken getAuthentication(String token) {
 		if(jwtUtil.tokenValido(token)) /*Se o token for válido*/ {
 			// Autorizado
 			String username = jwtUtil.getUsername(token);
 			UserDetails user = userDetailsService.loadUserByUsername(username); // instanciar 
+			return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 		}
 		return null;
 	}
