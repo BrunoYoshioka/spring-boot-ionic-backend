@@ -14,11 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.bruno.cursomc.dominio.Cidade;
 import com.bruno.cursomc.dominio.Cliente;
 import com.bruno.cursomc.dominio.Endereco;
+import com.bruno.cursomc.dominio.enums.Perfil;
 import com.bruno.cursomc.dominio.enums.TipoCliente;
 import com.bruno.cursomc.dto.ClienteDTO;
 import com.bruno.cursomc.dto.ClienteNewDTO;
 import com.bruno.cursomc.repositories.ClienteRepository;
 import com.bruno.cursomc.repositories.EnderecoRepository;
+import com.bruno.cursomc.security.UserSS;
+import com.bruno.cursomc.services.exceptions.AuthorizationException;
 import com.bruno.cursomc.services.exceptions.DataIntegrityException;
 import com.bruno.cursomc.services.exceptions.ObjectNotFoundException;
 
@@ -45,6 +48,14 @@ public class ClienteService {
 	// O Spring Boot versão 2.X.X só aceita versão 8 em diante.
 	// Responsável por receber id e retornar cliente correspondente ao id 
 	public Cliente find(Integer id) {
+		
+		// verificação: se o cliente logado não for ADMIN e não for o cliente do id solicitado, lançar uma exceção
+		UserSS user = UserService.authenticated();
+		if(user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso negado");
+			
+		}
+		
 		Optional<Cliente> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName()));
@@ -57,6 +68,8 @@ public class ClienteService {
 		enderecoRepository.saveAll(obj.getEnderecos()); // detalhe, antes tem q implementar cli.getEnderecos().add(end); no método fromDTO
 		return obj;
 	}
+	
+	
 	
 	public Cliente update(Cliente obj) {
 //		find(obj.getId()); // repete o mesmo procedimento do método find antes de salvar
