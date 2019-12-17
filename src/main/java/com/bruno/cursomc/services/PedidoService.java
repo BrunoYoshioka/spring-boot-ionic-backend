@@ -6,8 +6,12 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.bruno.cursomc.dominio.Cliente;
 import com.bruno.cursomc.dominio.ItemPedido;
 import com.bruno.cursomc.dominio.PagamentoComBoleto;
 import com.bruno.cursomc.dominio.Pedido;
@@ -15,6 +19,8 @@ import com.bruno.cursomc.dominio.enums.EstadoPagamento;
 import com.bruno.cursomc.repositories.ItemPedidoRepository;
 import com.bruno.cursomc.repositories.PagamentoRepository;
 import com.bruno.cursomc.repositories.PedidoRepository;
+import com.bruno.cursomc.security.UserSS;
+import com.bruno.cursomc.services.exceptions.AuthorizationException;
 import com.bruno.cursomc.services.exceptions.ObjectNotFoundException;
 // Classe responsável por realizar consultas no repositório.
 @Service
@@ -83,5 +89,18 @@ public class PedidoService {
 		itemPedidoRepository.saveAll(obj.getItens());
 		emailService.sendOrderConfirmationHtmlEmail(obj); // mandar o email quando acabar de ser inserido um novo pedido
 		return obj;
+	}
+	
+	// Função para retornar consulta de todos os pedidos por paginação
+	public Page<Pedido> findPage(Integer page /*Pagina começa com 0*/, Integer linesPerPage /*Linhas por páginas*/, 
+		String orderBy /*ordenar atributo por Id, Nome, etc*/, String direction /*Ordenar por qual direção (Ascendente ou descendente)*/){
+		UserSS user = UserService.authenticated();
+		if(user==null)/*Não está autenticado*/{
+			throw new AuthorizationException("Acesso negado");
+		}
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		// retornar somente os pedidos que está logado
+		Cliente cliente = clienteService.find(user.getId());
+		return repo.findByCliente(cliente, pageRequest);
 	}
 }
