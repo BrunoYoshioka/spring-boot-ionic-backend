@@ -33,7 +33,7 @@ public class AuthResource {
 		response.addHeader("Authorization", "Bearer " + token); // adiciono token na resposta na minha requisição
 		return ResponseEntity.noContent().build();
 	}
-	
+	// endpoint esqueci a senha
 	@RequestMapping(value = "/forgot", method = RequestMethod.POST) // protegido pela autenticação, o usuário deverá estar logado
 	public ResponseEntity<Void> forgot(@Valid @RequestBody EmailDTO objDto) {
 		service.sendNewPassword(objDto.getEmail());
