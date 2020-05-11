@@ -50,6 +50,9 @@ public class ClienteService {
 
 	@Value("${img.prefix.client.profile}")
 	private String prefix;
+
+	@Value("${img.profile.size}")
+	private Integer size;
 	
 	// criando uma operação para buscar a categoria por id
 	// chamar a operação do acesso a dados que é o repository
@@ -171,6 +174,9 @@ public class ClienteService {
 
 		// Extrair o jpg apartir do arquivo enviado na requisição
 		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
+		jpgImage = imageService.cropSquare(jpgImage); // recortar a imagem de forma q fica quadrada
+		jpgImage = imageService.resize(jpgImage, size);
+
 		String fileName = prefix + user.getId() + ".jpg";
 
 		return s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");

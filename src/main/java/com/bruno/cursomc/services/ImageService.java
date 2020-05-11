@@ -2,6 +2,7 @@ package com.bruno.cursomc.services;
 
 import com.bruno.cursomc.services.exceptions.FileException;
 import org.apache.commons.io.FilenameUtils;
+import org.imgscalr.Scalr;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,5 +55,25 @@ public class ImageService {
         } catch (IOException e){
             throw new FileException("Erro ao ler arquivo");
         }
+    }
+
+    // função para "cropar" uma imagem para que fique quadrada
+    public BufferedImage cropSquare(BufferedImage sourceImg){
+        // Descobrir qual q é o minimo
+        int min = (sourceImg.getHeight() <= sourceImg.getWidth()) /*Se a altura for menor que a largura*/ ?
+                sourceImg.getHeight() /*É altura*/ :
+                sourceImg.getWidth(); /*Se não, é largura*/
+        // recortando a imagem
+        return Scalr.crop(
+                sourceImg,
+                (sourceImg.getWidth()/2) - (min/2),
+                (sourceImg.getHeight()/2) - (min/2),
+                min,
+                min);
+    }
+
+    // função para redimensionar uma imagem
+    public BufferedImage resize(BufferedImage sourceImg /*recebendo a imagem*/ , int size /*receber o tamanho que eu quero q seja recortada*/ ) {
+        return Scalr.resize(sourceImg, Scalr.Method.ULTRA_QUALITY, size);
     }
 }
