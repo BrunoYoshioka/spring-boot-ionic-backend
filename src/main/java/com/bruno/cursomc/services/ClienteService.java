@@ -1,5 +1,6 @@
 package com.bruno.cursomc.services;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +25,7 @@ import com.bruno.cursomc.security.UserSS;
 import com.bruno.cursomc.services.exceptions.AuthorizationException;
 import com.bruno.cursomc.services.exceptions.DataIntegrityException;
 import com.bruno.cursomc.services.exceptions.ObjectNotFoundException;
+import org.springframework.web.multipart.MultipartFile;
 
 // Classe responsável por realizar consultas no repositório.
 @Service
@@ -37,6 +39,9 @@ public class ClienteService {
 	
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+
+	@Autowired
+	private S3Service s3Service;
 	
 	// criando uma operação para buscar a categoria por id
 	// chamar a operação do acesso a dados que é o repository
@@ -146,5 +151,10 @@ public class ClienteService {
 		// Essa variavel newObj que busquei todos os dados do banco irá atualizar para os novos valores fornecidos no obj
 		newObj.setNome(obj.getNome());
 		newObj.setEmail(obj.getEmail());
+	}
+
+	// upload de uma foto do perfil do cliente
+	public URI uploadProfilePicture(MultipartFile multipartFile){
+		return s3Service.uploadFile(multipartFile);
 	}
 }

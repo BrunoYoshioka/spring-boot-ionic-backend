@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.bruno.cursomc.dominio.Cliente;
@@ -93,5 +94,12 @@ public class ClienteResources {
 		Page<ClienteDTO> listDto = list.map(obj /*dando apelido objeto*/ -> // aplicar operação map que vai percorrer para cada elemento da lista
 			new ClienteDTO(obj/*Passando o objeto (senão retorna nulo!*/));
 		return ResponseEntity.ok().body(listDto);
+	}
+
+	// Operação de enviar a foto do perfil do cliente
+	@RequestMapping(value = "/picture", method = RequestMethod.POST)
+	public ResponseEntity<Void> uploadProfilePicture(@RequestParam(name = "file") MultipartFile file){
+		URI uri = service.uploadProfilePicture(file); // fazer upload de uma imagem e tendo como resposta uri
+		return ResponseEntity.created(uri).build(); // retornar http 201 como argumento de resposta
 	}
 }
