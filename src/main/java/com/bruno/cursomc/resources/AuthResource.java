@@ -31,6 +31,7 @@ public class AuthResource {
 		UserSS user = UserService.authenticated(); // pegar usuário logado
 		String token = jwtUtil.generateToken(user.getUsername()); // gerar novo token com o meu usuário e será gerado o token com a data atual, o tempo de espiração será renovado
 		response.addHeader("Authorization", "Bearer " + token); // adiciono token na resposta na minha requisição
+		response.addHeader("access-control-expose-headers", "Authorization");
 		return ResponseEntity.noContent().build();
 	}
 	// endpoint esqueci a senha
