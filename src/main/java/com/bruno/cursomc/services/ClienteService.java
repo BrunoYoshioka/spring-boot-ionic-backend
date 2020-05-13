@@ -126,6 +126,23 @@ public class ClienteService {
 	public List<Cliente> findAll() {
 		return repo.findAll();
 	}
+
+	public Cliente findByEmail(String email){
+
+		UserSS userSS = UserService.authenticated(); // Pegando Usuario Autenticado
+
+		/* Fazendo a Verificação se o Usuario não estar Nulo e se estar Autenticando */
+		if (userSS==null || !userSS.hasRole(Perfil.ADMIN) && !email.equals(userSS.getUsername())){
+			throw new AuthorizationException("Acesso negado");
+		}
+
+		Cliente obj = repo.findByEmail(email);
+		if (obj == null){
+			throw new ObjectNotFoundException(
+					"Objeto não encontrado! Id: " + userSS.getId() + ", Tipo: " + Cliente.class.getName());
+		}
+		return obj;
+	}
 	
 	// Função para retornar todas as categorias por paginação
 	public Page<Cliente> findPage(Integer page /*Pagina começa com 0*/, Integer linesPerPage /*Linhas por páginas*/, 
