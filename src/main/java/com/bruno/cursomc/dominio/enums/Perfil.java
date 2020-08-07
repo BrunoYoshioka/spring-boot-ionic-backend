@@ -15,15 +15,15 @@ public enum Perfil {
 	public int getCod() {
 		return cod;
 	}
-	public void setCod(int cod) {
+	/*public void setCod(int cod) {
 		this.cod = cod;
-	}
+	}*/
 	public String getDescricao() {
 		return descricao;
 	}
-	public void setDescricao(String descricao) {
+	/*public void setDescricao(String descricao) {
 		this.descricao = descricao;
-	}
+	}*/
 	
 	// metodo do tipo static para que a operação se possivel de serem executada mesmo sem instanciar objetos
 	public static Perfil toEnum(Integer cod) {

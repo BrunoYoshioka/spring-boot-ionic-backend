@@ -127,12 +127,12 @@ public class ClienteService {
 		return repo.findAll();
 	}
 
-	public Cliente findByEmail(String email){
+	/*public Cliente findByEmail(String email){
 
 		UserSS userSS = UserService.authenticated(); // Pegando Usuario Autenticado
 
-		/* Fazendo a Verificação se o Usuario não estar Nulo e se estar Autenticando */
-		if (userSS==null || !userSS.hasRole(Perfil.ADMIN) && !email.equals(userSS.getUsername())){
+		// Se o (usuário for nulo ou não admin) e (não estar autenticado)
+		if (userSS==null && !userSS.hasRole(Perfil.ADMIN) && !email.equals(userSS.getUsername())){
 			throw new AuthorizationException("Acesso negado");
 		}
 
@@ -142,6 +142,21 @@ public class ClienteService {
 					"Objeto não encontrado! Id: " + userSS.getId() + ", Tipo: " + Cliente.class.getName());
 		}
 		return obj;
+	}*/
+
+	public Cliente findByEmail(String email) {
+		UserSS userSS = UserService.authenticated(); // Pegando Usuario Autenticado
+		//Fazendo a Verificação se o Usuario não estiver Nulo e Usuário tiver o perfil ADMIN e se estar Autenticando
+		if (userSS != null && userSS.hasRole(Perfil.ADMIN) && email.equals(userSS.getUsername())) {
+			Cliente obj = repo.findByEmail(email);
+			if (obj == null){
+				throw new ObjectNotFoundException(
+						"Objeto não encontrado! Id: " + userSS.getId() + ", Tipo: " + Cliente.class.getName());
+			}
+			return obj;
+		} else {
+			throw new AuthorizationException("Acesso Negado");
+		}
 	}
 	
 	// Função para retornar todas as categorias por paginação
