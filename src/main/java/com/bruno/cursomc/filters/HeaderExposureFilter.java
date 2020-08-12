@@ -1,4 +1,4 @@
-package com.bruno.cursomc;
+package com.bruno.cursomc.filters;
 
 import org.springframework.stereotype.Component;
 
